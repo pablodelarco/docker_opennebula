@@ -130,17 +130,21 @@ Simplifies local testing with volume persistence and port mappings:
 version: '3.8'
 services:
   opennebula:
-    image: pablodelarco/opennebula-frontend:6.10
-    cap_add:
-      - NET_ADMIN
+    image: pablodelarco/opennebula-frontend:latest
+    container_name: opennebula
+    privileged: true
     ports:
       - "2633:2633"
       - "9869:9869"
+      - "2616:2616"
+      - "2474:2474"
+      - "29876:29876"
       - "2222:22"
     volumes:
-      - opennebula-data:/var/lib/one
+      - opennebula_data:/var/lib/one
 volumes:
-  opennebula-data:
+  opennebula_data:
+
 ```
 
 ### 3. `.github/workflows/ci-cd.yml`
