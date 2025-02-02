@@ -1,1 +1,83 @@
+name: OpenNebula CI
 
+on:
+  push:
+    branches: [ "main" ]      # Trigger on pushes to main
+    tags: [ 'v*' ]            # Trigger on version tags (e.g., v6.10.0)
+  pull_request:
+    branches: [ "main" ]      # Trigger on PRs targeting main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) Check out the code
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # 2) Set up Docker Buildx (for better/faster builds and caching)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 3) Build Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --tag opennebula-frontend:latest \
+            .
+      
+      # 4) Test Container
+      - name: Run Smoke Tests
+        run: |
+          # Run the container in detached mode
+          docker run -d --privileged --name opennebula_test \
+            -p 2633:2633 \
+            -p 9869:9869 \
+            -p 2474:2474 \
+            -p 29876:29876 \
+            -p 2616:2616 \
+            -p 2222:22 \
+            opennebula-frontend:latest
+          
+          # Wait a bit for services to come up
+          sleep 15
+
+          # Perform basic checks to ensure ports are up.
+          # In real usage, you can do more thorough checks (e.g., check FireEdge at 2616, Sunstone at 9869, etc.).
+
+          echo "Checking Sunstone server on http://localhost:9869"
+          curl -sSf http://localhost:9869 >/dev/null
+          echo "Sunstone is responding!"
+
+          echo "Checking FireEdge server on http://localhost:2616"
+          curl -sSf http://localhost:2616 >/dev/null
+          echo "FireEdge is responding!"
+
+          # Clean up
+          docker stop opennebula_test
+          docker rm opennebula_test
+      
+      # 5) (Optional) Push Docker Image to Registry
+      #    - This will only happen for pushes to main or for tags, not for pull requests
+      - name: Log in to Docker Registry
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      
+      - name: Push Docker Image (latest)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Tag the image
+          docker tag opennebula-frontend:latest pablodelarco/opennebula-frontend:latest
+          
+          # Push the image with the :latest tag
+          docker push pablodelarco/opennebula-frontend:latest
+      
+      - name: Push Docker Image (versioned)
+        # If you push a tag like v6.10 or v6.10.1, this job will push with that version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          VERSION="${GITHUB_REF/refs\/tags\//}"
+          docker tag opennebula-frontend:latest pablodelarco/opennebula-frontend:${VERSION}
+          docker push pablodelarco/opennebula-frontend:${VERSION}
