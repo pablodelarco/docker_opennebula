@@ -12,9 +12,10 @@ env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend
   HELM_CHART_NAME: opennebula-frontend
   K8S_NAMESPACE: opennebula
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build-test-push:
+  build-test-push-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -25,19 +26,19 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest \
-                       -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+                       -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Run Trivy vulnerability scanner 
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "${{ env.IMAGE_NAME }}:latest"
+          image-ref: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
- 
+
       - name: Run Integration Tests
         run: |
           docker run -d --privileged --name opennebula_test \
@@ -47,39 +48,10 @@ jobs:
             -p 29876:29876 \
             -p 2616:2616 \
             -p 2222:22 \
-            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           
           timeout 30 bash -c 'until curl -sf http://localhost:9869; do sleep 2; done'
-          timeout 30 bash -c 'until curl -sf http://localhost:2616; do sleep 2; done'
-
-          docker stop opennebula_test
-          docker rm opennebula_test
-
-      - name: Setup Helm
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
-        uses: azure/setup-helm@v3
-        with:
-          version: 'v3.12.0'
-
-      - name: Package Helm Chart
-        run: |
-          helm dependency update helm/
-          helm package helm/ -d ./helm-releases
-
-      - name: Push Helm Chart
-        uses: actions/upload-artifact@v3
-        with:
-          name: helm-chart
-          path: ./helm-releases/*.tgz
-
-      - name: Deploy to Kubernetes
-        run: |
-          helm upgrade --install \
-            --namespace ${{ env.K8S_NAMESPACE }} \
-            --set image.tag=${{ github.sha }} \
-            --set dockerhub.username=${{ secrets.DOCKERHUB_USERNAME }} \
-            ${{ env.HELM_CHART_NAME }} \
-            ./helm-releases/*.tgz
+          docker rm -f opennebula_test
 
       - name: Log in to Docker Hub
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
@@ -88,14 +60,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Tag and Push Docker Image
+      - name: Push Docker Images
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         run: |
-          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.IMAGE_NAME }}:latest
-
+          
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION="${GITHUB_REF/refs\/tags\//}"
-            docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.IMAGE_NAME }}:${VERSION}
-            docker push ${{ env.IMAGE_NAME }}:${VERSION}
+            docker tag ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} ${{ env.IMAGE_NAME }}:$VERSION
+            docker push ${{ env.IMAGE_NAME }}:$VERSION
           fi
+
+      - name: Setup Helm and Kubernetes tools
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        uses: azure/setup-helm@v3
+        with:
+          version: 'v3.12.0'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package Helm Chart
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          helm dependency update helm/
+          helm package helm/ -d ./helm-releases --version ${{ env.IMAGE_TAG }}
+
+      - name: Deploy to Kubernetes
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          helm upgrade --install \
+            --namespace ${{ env.K8S_NAMESPACE }} \
+            --create-namespace \
+            --set image.repository=${{ env.IMAGE_NAME }} \
+            --set image.tag=${{ env.IMAGE_TAG }} \
+            --set postgresql.auth.password=${{ secrets.POSTGRES_PASSWORD }} \
+            --wait \
+            ${{ env.HELM_CHART_NAME }} \
+            ./helm-releases/*.tgz
