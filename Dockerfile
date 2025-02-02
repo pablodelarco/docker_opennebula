@@ -5,6 +5,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install base dependencies
+# Install base dependencies
 RUN apt-get update && apt-get install -y \
     gnupg2 \
     wget \
@@ -15,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     openssh-server \
     openssh-client \
     sudo \
+    # Prevent SSH host key generation during build
+    && ssh-keygen -A \
+    && rm -f /etc/ssh/ssh_host_* \
     && rm -rf /var/lib/apt/lists/*
 
 # Create keyrings directory
