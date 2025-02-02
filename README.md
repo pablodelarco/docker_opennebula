@@ -18,14 +18,11 @@ A containerized OpenNebula frontend with automated CI/CD pipeline and Helm chart
 docker build -t opennebula-frontend:latest .
 
 # Run the container
-docker run -d --privileged --name opennebula_test \
-    -p 2633:2633 \
-    -p 9869:9869 \
-    -p 2474:2474 \
-    -p 29876:29876 \
-    -p 2616:2616 \
-    -p 2222:22 \
-    opennebula-frontend:latest
+docker run -d --privileged \
+  -p 2633:2633 -p 9869:9869 \
+  -p 2474:2474 -p 29876:29876 \
+  -p 2616:2616 -p 2222:22 \
+  opennebula-frontend:latest
 ```
 
 ### 2. Kubernetes Deployment with Helm
