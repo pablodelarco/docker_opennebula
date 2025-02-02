@@ -24,7 +24,7 @@ docker run -d \
   -p 2633:2633 \
   -p 9869:9869 \
   -v opennebula-data:/var/lib/one \
-  your-dockerhub-username/opennebula-frontend:6.10
+  pablodelarco/opennebula-frontend:6.10
 ```
 
 ### Run with Docker Compose
@@ -106,7 +106,7 @@ MIT License. See [LICENSE](LICENSE).
 
 ## 🔗 Resources
 - [OpenNebula Documentation](https://docs.opennebula.io)
-- [Docker Hub Repository](https://hub.docker.com/r/your-dockerhub-username/opennebula-frontend)
+- [Docker Hub Repository](https://hub.docker.com/r/pablodelarco/opennebula-frontend)
 
 ---
 
