@@ -128,7 +128,7 @@ Simplifies local testing with volume persistence and port mappings:
 version: '3.8'
 services:
   opennebula:
-    image: your-dockerhub-username/opennebula-frontend:6.10
+    image: pablodelarco/opennebula-frontend:6.10
     cap_add:
       - NET_ADMIN
     ports:
