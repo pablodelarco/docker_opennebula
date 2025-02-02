@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build -t opennebula-frontend:latest .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy vulnerability scanner 
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'opennebula-frontend:latest'
@@ -34,7 +34,7 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-
+ 
       - name: Run Integration Tests
         run: |
           docker run -d --privileged --name opennebula_test \
