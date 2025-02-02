@@ -1,8 +1,5 @@
 # OpenNebula Docker Container
 
-![CI/CD](https://github.com/your-username/opennebula-docker/actions/workflows/ci-cd.yml/badge.svg)
-[![Docker Image Version](https://img.shields.io/docker/v/your-dockerhub-username/opennebula-frontend/latest)](https://hub.docker.com/r/your-dockerhub-username/opennebula-frontend)
-
 A Dockerized OpenNebula Front-End for easy deployment. This container allows users to quickly spin up an OpenNebula instance without manual installation.
 
 ## ✨ Features
