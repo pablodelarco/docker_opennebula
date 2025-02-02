@@ -50,7 +50,7 @@ jobs:
           echo "artifactName=opennebula-frontend-tar" >> $GITHUB_OUTPUT
 
       - name: Upload Docker Image Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.buildmeta.outputs.artifactName }}
           path: opennebula-frontend.tar
@@ -63,7 +63,7 @@ jobs:
     needs: build
     steps:
       - name: Download Image Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.imageArtifactName }}
           path: .
@@ -99,7 +99,7 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download Image Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.imageArtifactName }}
           path: .
