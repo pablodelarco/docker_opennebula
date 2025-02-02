@@ -19,12 +19,14 @@ A Dockerized OpenNebula Front-End for easy deployment. This container allows use
 ### Run with Docker
 ```bash
 docker run -d \
-  --name opennebula \
-  --cap-add=NET_ADMIN \
-  -p 2633:2633 \
-  -p 9869:9869 \
-  -v opennebula-data:/var/lib/one \
-  pablodelarco/opennebula-frontend:6.10
+    --name opennebula \
+    -p 2633:2633 \
+    -p 9869:9869 \
+    -p 2474:2474 \
+    -p 29876:29876 \
+    -p 2616:2616 \
+    -p 2222:22 \
+    pablodelarco/opennebula-frontend:latest
 ```
 
 ### Run with Docker Compose
