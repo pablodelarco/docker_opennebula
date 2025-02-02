@@ -1,0 +1,10 @@
+OpenNebula Frontend deployed!
+
+1. Get the external IP:
+   kubectl get svc {{ .Chart.Name }}-service
+
+2. Access Sunstone UI:
+   http://$(kubectl get svc {{ .Chart.Name }}-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}'):{{ .Values.service.externalPorts.sunstone }}
+
+3. SSH Access:
+   ssh oneadmin@$(kubectl get svc {{ .Chart.Name }}-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}') -p {{ .Values.opennebula.sshPort }}

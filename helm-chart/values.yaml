@@ -1,0 +1,44 @@
+# Image Configuration
+image:
+  repository: docker.io/{{ .Values.dockerhub.username }}/opennebula-frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# OpenNebula Configuration
+opennebula:
+  oneadminPassword: "oneadmin"  # In production, use secrets management
+  sshPort: 2222
+  ports:
+    sunstone: 2633
+    fireedge: 9869
+    onegate: 2616
+
+# Kubernetes Configuration
+service:
+  type: LoadBalancer
+  annotations: {}
+  externalPorts:
+    sunstone: 2633
+    fireedge: 9869
+
+# PostgreSQL Subchart (for persistent storage)
+postgresql:
+  enabled: true
+  auth:
+    database: "opennebula"
+    username: "oneadmin"
+    password: "oneadmin"
+
+# Resource Limits
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1000m"
+  limits:
+    memory: "4Gi"
+    cpu: "2000m"
+
+# Security Context
+securityContext:
+  privileged: true  # Required for OpenNebula
+  runAsUser: 0
