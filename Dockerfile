@@ -65,6 +65,14 @@ EXPOSE 2633 9869 2474 29876 2616 2222
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+# ***Cleanup Step: Remove any auto-generated SSH private keys***
+RUN rm -f /etc/ssh/ssh_host_rsa_key \
+          /etc/ssh/ssh_host_ecdsa_key \
+          /etc/ssh/ssh_host_ed25519_key \
+          /var/lib/one/.ssh/id_rsa \
+          /var/lib/one/.ssh/id_rsa.pub \
+          /var/lib/one/.ssh-oneprovision/id_rsa
+
 # Change CMD to ENTRYPOINT
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["sh", "-c", "service ssh start && \
