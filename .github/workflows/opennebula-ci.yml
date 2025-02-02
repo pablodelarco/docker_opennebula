@@ -75,7 +75,10 @@ jobs:
 
       - name: Run Integration Tests
         run: |
-          docker run -d --privileged --name opennebula_test \
+          docker run -d \
+            -v opennebula_ssh:/var/lib/one/.ssh \
+            -v opennebula_host_ssh:/etc/ssh \
+            --privileged --name opennebula_test \
             -p 2633:2633 \
             -p 9869:9869 \
             -p 2474:2474 \

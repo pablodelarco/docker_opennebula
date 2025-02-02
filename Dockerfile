@@ -61,11 +61,16 @@ RUN sudo -u oneadmin onedb init -f
 # Expose ports
 EXPOSE 2633 9869 2474 29876 2616 2222
 
-# Start services
-CMD service ssh start && \
+# Copy and set up entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Change CMD to ENTRYPOINT
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["sh", "-c", "service ssh start && \
     sudo -u oneadmin /usr/bin/oned && \
     sudo -u oneadmin /usr/bin/sunstone-server start && \
     sudo -u oneadmin /usr/bin/fireedge-server start && \
     sudo -u oneadmin /usr/bin/oneflow-server start && \
     sudo -u oneadmin /usr/bin/onegate-server start && \
-    tail -f /var/log/one/*.log
+    tail -f /var/log/one/*.log"]
