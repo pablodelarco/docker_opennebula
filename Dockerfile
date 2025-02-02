@@ -5,21 +5,16 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install base dependencies
-# Install base dependencies
-# Install OpenNebula packages
 RUN apt-get update && apt-get install -y \
-    opennebula \
-    opennebula-sunstone \
-    opennebula-fireedge \
-    opennebula-gate \
-    opennebula-flow \
-    opennebula-provision \
-    # Remove auto-generated keys
-    && rm -rf /var/lib/one/.ssh* \
-    # Recreate directories without keys
-    && mkdir -p /var/lib/one/.ssh /var/lib/one/.ssh-oneprovision \
-    && chown -R oneadmin:oneadmin /var/lib/one/.ssh* \
-    && chmod 700 /var/lib/one/.ssh \
+    gnupg2 \
+    wget \
+    apt-transport-https \
+    ca-certificates \
+    ruby \
+    ruby-dev \
+    openssh-server \
+    openssh-client \
+    sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Create keyrings directory
