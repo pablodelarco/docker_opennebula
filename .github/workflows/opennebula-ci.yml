@@ -32,7 +32,6 @@ jobs:
         id: buildimg
         run: |
           docker build -t opennebula-frontend:latest .
-
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -49,7 +48,6 @@ jobs:
         run: |
           docker save opennebula-frontend:latest -o opennebula-frontend.tar
           echo "artifactName=opennebula-frontend-tar" >> $GITHUB_OUTPUT
-
       - name: Upload Docker Image Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -73,7 +71,6 @@ jobs:
         run: |
           docker load -i opennebula-frontend.tar
           docker images
-
       - name: Run Integration Tests
         run: |
           docker run -d \
@@ -90,10 +87,8 @@ jobs:
           
           timeout 30 bash -c 'until curl -sf http://localhost:9869; do sleep 2; done'
           timeout 30 bash -c 'until curl -sf http://localhost:2616; do sleep 2; done'
-
           docker stop opennebula_test
           docker rm opennebula_test
-
   ######################################
   # 3) PUSH JOB
   ######################################
@@ -111,7 +106,6 @@ jobs:
       - name: Load Docker Image
         run: |
           docker load -i opennebula-frontend.tar
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -122,7 +116,6 @@ jobs:
         run: |
           docker tag opennebula-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend:latest
-
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION="${GITHUB_REF/refs\/tags\//}"
             docker tag opennebula-frontend:latest ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend:${VERSION}

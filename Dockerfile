@@ -6,19 +6,20 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install base dependencies
 # Install base dependencies
+# Install OpenNebula packages
 RUN apt-get update && apt-get install -y \
-    gnupg2 \
-    wget \
-    apt-transport-https \
-    ca-certificates \
-    ruby \
-    ruby-dev \
-    openssh-server \
-    openssh-client \
-    sudo \
-    # Prevent SSH host key generation during build
-    && ssh-keygen -A \
-    && rm -f /etc/ssh/ssh_host_* \
+    opennebula \
+    opennebula-sunstone \
+    opennebula-fireedge \
+    opennebula-gate \
+    opennebula-flow \
+    opennebula-provision \
+    # Remove auto-generated keys
+    && rm -rf /var/lib/one/.ssh* \
+    # Recreate directories without keys
+    && mkdir -p /var/lib/one/.ssh /var/lib/one/.ssh-oneprovision \
+    && chown -R oneadmin:oneadmin /var/lib/one/.ssh* \
+    && chmod 700 /var/lib/one/.ssh \
     && rm -rf /var/lib/apt/lists/*
 
 # Create keyrings directory

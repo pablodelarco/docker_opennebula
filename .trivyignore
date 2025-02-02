@@ -1,2 +1,2 @@
-AsymmetricPrivateKey /etc/ssh/ssh_host_*
 AsymmetricPrivateKey /var/lib/one/.ssh/id_rsa
+AsymmetricPrivateKey /var/lib/one/.ssh-oneprovision/id_rsa
