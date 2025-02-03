@@ -39,7 +39,7 @@ jobs:
       # 🏗️ Step 4: Build the Docker image and tag it with both `latest` and the commit SHA
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest -t .
+          docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       # 🔍 Step 5: Run Trivy security scan BEFORE pushing the image
       # ❗ If CRITICAL or HIGH vulnerabilities are found, the pipeline fails
