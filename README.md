@@ -63,7 +63,7 @@ resources:
 Deploy with:
 ```bash
 helm upgrade --install opennebula-frontend helm/ \
-  -f helm/prod-values.yaml --namespace production --create-namespace
+  -f helm/custom-values.yaml --namespace production --create-namespace
 ```
 
 ---
@@ -75,11 +75,11 @@ kubectl get svc opennebula-frontend-service -n opennebula
 ```
 **Access Web UI:**
 ```
-http://<EXTERNAL-IP>:2633
+http://<EXTERNAL-IP>:2616
 ```
 **Local Port Forwarding:**
 ```bash
-kubectl port-forward svc/opennebula-frontend-service 2633:2633 -n opennebula
+kubectl port-forward svc/opennebula-frontend-service 2616:2616 -n opennebula
 ```
 
 ---
