@@ -36,7 +36,7 @@ docker run -d --privileged \
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/opennebula-docker.git
+git clone https://github.com/pablodelarco/docker_opennebula.git
 cd opennebula-docker
 ```
 
