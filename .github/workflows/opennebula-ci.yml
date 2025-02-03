@@ -47,9 +47,10 @@ jobs:
             -p 29876:29876 \
             -p 2616:2616 \
             -p 2222:22 \
-            ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.IMAGE_NAME }}:latest
           
           timeout 30 bash -c 'until curl -sf http://localhost:9869; do sleep 2; done'
+          docker logs opennebula_test
           docker rm -f opennebula_test
 
       - name: Log in to Docker Hub
