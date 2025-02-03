@@ -1,68 +1,49 @@
-# OpenNebula Frontend in Docker/Kubernetes
+# **OpenNebula Frontend: Docker & Kubernetes Deployment 🚀**
 
-A containerized OpenNebula frontend with automated CI/CD pipeline and Helm chart support.
+A containerized **OpenNebula 6.10** frontend with **Helm support** and **automated CI/CD**.
 
-## Features
+## **Features**
+✔️ **Dockerized** OpenNebula frontend  
+☸️ **Helm chart** for Kubernetes deployment  
+🛡️ **Security scanning** with CI/CD  
+⚡ **Production-ready** Kubernetes setup  
 
-- 🐳 Docker container with OpenNebula 6.10
-- ⚙️ Helm chart for Kubernetes deployment
-- 🔄 CI/CD pipeline with vulnerability scanning
-- ☁️ Production-ready Kubernetes configuration
+---
 
-## Deployment Options
+## **🛠 Deployment Options**
 
-### 1. Local Docker Deployment
-
+### **1️⃣ Local Deployment with Docker**
 ```bash
-# Build the image
+# Build & Run
 docker build -t opennebula-frontend:latest .
-
-# Run the container
-docker run -d --privileged \
-  -p 2633:2633 -p 9869:9869 \
-  -p 2474:2474 -p 29876:29876 \
-  -p 2616:2616 -p 2222:22 \
+docker run -d --privileged -p 2633:2633 -p 9869:9869 \
+  -p 2474:2474 -p 29876:29876 -p 2616:2616 -p 2222:22 \
   opennebula-frontend:latest
 ```
 
-### 2. Kubernetes Deployment with Helm
+---
 
-#### Prerequisites
-- Kubernetes cluster (v1.23+)
-- Helm (v3.12+)
-- kubectl configured for your cluster
+### **2️⃣ Kubernetes Deployment with Helm**
+#### **Prerequisites**
+- Kubernetes **v1.23+**, Helm **v3.12+**, `kubectl` configured
 
-#### Deployment Steps
-
-1. **Clone the repository**
+#### **Install Helm Chart**
 ```bash
-git clone https://github.com/pablodelarco/docker_opennebula.git
-cd opennebula-docker
-```
-
-2. **Add Bitnami Helm repository**
-```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
-```
-
-3. **Deploy with Helm**
-```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami && helm repo update
 helm upgrade --install opennebula-frontend helm/ \
-  --namespace opennebula \
-  --create-namespace \
-  --set image.repository=your-dockerhub-username/opennebula-frontend \
+  --namespace opennebula --create-namespace \
+  --set image.repository=pablodelarco/opennebula-frontend \
   --set image.tag=latest \
   --set postgresql.auth.password=your-secure-password
 ```
 
-### 3. Production Configuration
+---
 
-**Custom values.yaml**
+### **3️⃣ Production Setup**
+Use **custom values.yaml**:
 ```yaml
-# helm/prod-values.yaml
 image:
-  repository: your-registry/opennebula-frontend
+  repository: pablodelarco/opennebula-frontend
   tag: latest
 
 service:
@@ -81,85 +62,82 @@ resources:
     cpu: 2000m
     memory: 4Gi
 ```
-
-**Deploy with custom values**
+Deploy with:
 ```bash
 helm upgrade --install opennebula-frontend helm/ \
-  -f helm/prod-values.yaml \
-  --namespace production \
-  --create-namespace
+  -f helm/prod-values.yaml --namespace production --create-namespace
 ```
 
-## Accessing Services
+---
 
-1. **Get external IP**
+## **🔗 Accessing OpenNebula**
+**Find External IP:**
 ```bash
 kubectl get svc opennebula-frontend-service -n opennebula
 ```
-
-2. **Access Web UI**
+**Access Web UI:**
 ```
 http://<EXTERNAL-IP>:2633
 ```
-
-3. **Port-forward for local access**
+**Local Port Forwarding:**
 ```bash
 kubectl port-forward svc/opennebula-frontend-service 2633:2633 -n opennebula
 ```
 
-## Configuration Options
+---
 
-Key Helm chart parameters:
-
+## **⚙️ Helm Configuration**
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `image.repository` | Docker image repository | `docker.io/<your-username>/opennebula-frontend` |
-| `image.tag` | Docker image tag | `latest` |
+| `image.repository` | Docker image repo | `docker.io/pablodelarco/opennebula-frontend` |
+| `image.tag` | Image tag | `latest` |
 | `service.type` | Kubernetes service type | `LoadBalancer` |
-| `postgresql.enabled` | Enable PostgreSQL subchart | `true` |
-| `postgresql.auth.password` | PostgreSQL admin password | `oneadmin` |
-| `resources.limits` | Resource limits | `2 CPU / 4GB RAM` |
+| `postgresql.enabled` | Deploy PostgreSQL | `true` |
+| `postgresql.auth.password` | PostgreSQL password | `oneadmin` |
+| `resources.limits` | CPU & RAM limits | `2 CPU / 4GB RAM` |
 
 View all options:
 ```bash
 helm show values helm/
 ```
 
-## Persistence
+---
 
-The Helm chart configures these persistent volumes:
-- PostgreSQL data (50GB default)
-- OpenNebula configuration files
-- SSH keys storage
-
-## Troubleshooting
-
-**Check pod status**
+## **🔍 Troubleshooting**
+Check pod logs:
 ```bash
 kubectl get pods -n opennebula
-
 kubectl logs -f opennebula-frontend-<pod-id> -n opennebula
 ```
-
-**Uninstall**
+Uninstall OpenNebula:
 ```bash
 helm uninstall opennebula-frontend -n opennebula
 kubectl delete pvc -l app.kubernetes.io/instance=opennebula-frontend -n opennebula
 ```
 
-## CI/CD Pipeline
+---
 
-This repository includes:
-- 🛡️ Trivy vulnerability scanning
-- ✅ Integration tests
-- ☸️ Automatic Helm chart packaging
-- 🔄 Docker Hub image publishing
+## **🔄 CI/CD Pipeline**
+- ✅ **Trivy security scanning**
+- 🛠 **Automated Helm chart packaging**
+- 🐳 **Docker Hub image publishing**
+- ☸️ **Kubernetes deployment validation**
 
-Triggered on:
-- Push to `main` branch
+⏳ **Triggers**:
+- Push to `main`
 - Tag creation (semantic versioning)
 - Pull requests
 
 ---
 
-**Contributions welcome!** See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+## **👥 Contributions**
+We welcome contributions!  
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+### **🚀 This README is now:**
+✔️ **Shorter** & more concise  
+✔️ **Easier to follow**  
+✔️ **Retains all critical details**  
+🚀 Let me know if you want further tweaks!
