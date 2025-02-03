@@ -35,7 +35,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 🏗️ Step 4: Build the Docker image and tag it with both `latest` and the commit SHA
+      # 🏗️ Step 4: Build the Docker image and tag it with `latest`
       - name: Build Docker Image
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:latest .

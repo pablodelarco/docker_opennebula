@@ -17,11 +17,12 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      securityContext:
-        {{- toYaml .Values.securityContext | nindent 8 }}
+      securityContext: {}
       containers:
       - name: frontend
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 8 }}
         imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.opennebula.ports.sunstone }}
