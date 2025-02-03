@@ -1,6 +1,6 @@
 # Image Configuration
 image:
-  repository: docker.io/{{ .Values.dockerhub.username }}/opennebula-frontend
+  repository: pablodelarco/opennebula-frontend
   tag: latest
   pullPolicy: IfNotPresent
 

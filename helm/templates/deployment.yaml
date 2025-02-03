@@ -20,9 +20,9 @@ spec:
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
       containers:
-      - name: {{ .Chart.Name }}
+      - name: frontend
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.opennebula.ports.sunstone }}
           name: sunstone
