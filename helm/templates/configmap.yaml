@@ -4,7 +4,7 @@ metadata:
   name: {{ .Chart.Name }}-config
 data:
   oned.conf: |
-    DB = [ backend = "sqlite",
+    DB = [ backend = "postgresql",
            server  = "{{ .Release.Name }}-postgresql",
            port    = 5432,
            user    = "{{ .Values.postgresql.auth.username }}",

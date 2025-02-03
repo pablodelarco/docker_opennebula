@@ -9,16 +9,15 @@ on:
   pull_request:
     branches: [main]
 
-# 🔹 Define environment variables used across all steps
 env:
-  REGISTRY: docker.io  # Docker registry used for pushing images
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend  # Image repo
+  REGISTRY: docker.io  #
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend
   HELM_CHART_NAME: opennebula-frontend 
   K8S_NAMESPACE: opennebula
 
 jobs:
   build-test-push-deploy:
-    runs-on: ubuntu-latest  # 🔹 Run on the latest Ubuntu virtual machine
+    runs-on: ubuntu-latest
 
     steps:
       # 🛠️ Step 1: Checkout the code from the repository
@@ -68,15 +67,10 @@ jobs:
             -p 29876:29876 \
             -p 2616:2616 \
             -p 2222:22 \
-            ${{ env.IMAGE_NAME }}:latest  # 🔥 Always run tests on the latest image
+            ${{ env.IMAGE_NAME }}:latest 
 
-          # ⏳ Wait for the service to be available (max 30 sec timeout)
           timeout 30 bash -c 'until curl -sf http://localhost:9869; do sleep 2; done'
-
-          # 📜 Print container logs (useful for debugging if the test fails)
           docker logs opennebula_test
-
-          # 🧹 Clean up test container
           docker rm -f opennebula_test
 
       # ☸️ Step 8: Set up Helm and Kubernetes CLI tools
@@ -93,4 +87,4 @@ jobs:
           helm package helm/ -d ./helm-releases \
             --version 0.1.0 \
             --app-version latest \
-            --debug  # 🛠️ Enable debug mode for troubleshooting Helm packaging
+            --debug

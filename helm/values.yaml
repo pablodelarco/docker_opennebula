@@ -9,7 +9,7 @@ opennebula:
   oneadminPassword: "oneadmin"  # In production, use secrets management
   sshPort: 2222
   ports:
-    sunstone: 2633
+    sunstone: 2616
     fireedge: 9869
     onegate: 2616
 
