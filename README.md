@@ -48,8 +48,6 @@ image:
 
 service:
   type: LoadBalancer
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 
 postgresql:
   auth:
