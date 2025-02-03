@@ -2,17 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Chart.Name }}-service
-  annotations:
-    {{- toYaml .Values.service.annotations | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-  - port: {{ .Values.service.externalPorts.sunstone }}
-    targetPort: {{ .Values.opennebula.ports.sunstone }}
-    name: sunstone
-  - port: {{ .Values.service.externalPorts.fireedge }}
-    targetPort: {{ .Values.opennebula.ports.fireedge }}
-    name: fireedge
+    - port: {{ .Values.service.externalPorts.sunstone }}
+      targetPort: {{ .Values.opennebula.ports.sunstone }}
+      name: sunstone
+    - port: {{ .Values.service.externalPorts.fireedge }}
+      targetPort: {{ .Values.opennebula.ports.fireedge }}
+      name: fireedge
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}

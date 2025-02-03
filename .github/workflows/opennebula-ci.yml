@@ -13,9 +13,8 @@ on:
 env:
   REGISTRY: docker.io  # Docker registry used for pushing images
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/opennebula-frontend  # Image repo
-  HELM_CHART_NAME: opennebula-frontend  # Helm chart name for Kubernetes
-  K8S_NAMESPACE: opennebula  # Kubernetes namespace where Helm will deploy
-  IMAGE_TAG: ${{ github.sha }}  # Unique tag based on commit SHA
+  HELM_CHART_NAME: opennebula-frontend 
+  K8S_NAMESPACE: opennebula
 
 jobs:
   build-test-push-deploy:
@@ -40,7 +39,7 @@ jobs:
       # 🏗️ Step 4: Build the Docker image and tag it with both `latest` and the commit SHA
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:latest -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker build -t ${{ env.IMAGE_NAME }}:latest -t .
 
       # 🔍 Step 5: Run Trivy security scan BEFORE pushing the image
       # ❗ If CRITICAL or HIGH vulnerabilities are found, the pipeline fails
@@ -58,7 +57,6 @@ jobs:
       - name: Push Docker Images
         run: |
           docker push ${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
       # 🧪 Step 7: Run integration tests using the `latest` image
       - name: Run Integration Tests
@@ -93,6 +91,6 @@ jobs:
         run: |
           helm dependency update helm/  # Update Helm dependencies if any
           helm package helm/ -d ./helm-releases \
-            --version 0.1.0-${{ github.sha }} \
-            --app-version ${{ github.sha }} \
+            --version 0.1.0 \
+            --app-version latest \
             --debug  # 🛠️ Enable debug mode for troubleshooting Helm packaging

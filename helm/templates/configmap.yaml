@@ -8,7 +8,7 @@ data:
            server  = "{{ .Release.Name }}-postgresql",
            port    = 5432,
            user    = "{{ .Values.postgresql.auth.username }}",
-           passwd  = "$POSTGRES_PASSWORD",
+           passwd  = "{{ .Values.postgresql.auth.password }}",
            db_name = "{{ .Values.postgresql.auth.database }}" ]
 
 
