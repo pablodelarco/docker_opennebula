@@ -17,24 +17,24 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      securityContext: {}
+      securityContext: {} 
       containers:
-      - name: frontend
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        securityContext:
-          {{- toYaml .Values.securityContext | nindent 8 }}
-        imagePullPolicy: Always
-        ports:
-        - containerPort: {{ .Values.opennebula.ports.sunstone }}
-          name: sunstone
-        - containerPort: {{ .Values.opennebula.ports.fireedge }}
-          name: fireedge
-        - containerPort: {{ .Values.opennebula.sshPort }}
-          name: ssh
-        envFrom:
-        - configMapRef:
-            name: {{ .Chart.Name }}-config
-        - secretRef:
-            name: {{ .Chart.Name }}-secrets
-        resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+        - name: frontend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}  # 🔹 Use container-specific security settings
+          ports:
+            - containerPort: {{ .Values.opennebula.ports.sunstone }}
+              name: sunstone
+            - containerPort: {{ .Values.opennebula.ports.fireedge }}
+              name: fireedge
+            - containerPort: {{ .Values.opennebula.sshPort }}
+              name: ssh
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-config
+            - secretRef:
+                name: {{ .Chart.Name }}-secrets
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

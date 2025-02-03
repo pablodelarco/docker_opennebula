@@ -1,19 +1,19 @@
-# Image Configuration
+# 🔹 Image Configuration
 image:
   repository: pablodelarco/opennebula-frontend
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
-# OpenNebula Configuration
+# 🔹 OpenNebula Configuration
 opennebula:
-  oneadminPassword: "oneadmin"  # In production, use secrets management
+  oneadminPassword: "oneadmin"  # ⚠️ Set via secrets management
   sshPort: 2222
   ports:
     sunstone: 2616
     fireedge: 9869
-    onegate: 2616
+    onegate: 5030
 
-# Kubernetes Configuration
+# 🔹 Kubernetes Configuration
 service:
   type: LoadBalancer
   annotations: {}
@@ -21,15 +21,15 @@ service:
     sunstone: 2616
     fireedge: 9869
 
-# PostgreSQL Subchart (for persistent storage)
+# 🔹 PostgreSQL Subchart (for persistent storage)
 postgresql:
   enabled: true
   auth:
     database: "opennebula"
     username: "oneadmin"
-    password: "oneadmin"
+    password: "oneadmin"  # ⚠️ Set via secrets management
 
-# Resource Limits
+# 🔹 Resource Limits
 resources:
   requests:
     memory: "2Gi"
@@ -38,7 +38,10 @@ resources:
     memory: "4Gi"
     cpu: "2000m"
 
-# Security Context
-securityContext:
-  privileged: true  # Required for OpenNebula
+# 🔹 Security Context (Container Level)
+containerSecurityContext:
+  privileged: true  # ✅ Now correctly placed inside the container, not at the pod level
   runAsUser: 0
+  capabilities:
+    add:
+      - SYS_ADMIN
