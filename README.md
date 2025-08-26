@@ -128,12 +128,6 @@ kubectl delete pvc -l app.kubernetes.io/instance=opennebula-frontend -n opennebu
 
 ---
 
-## **👥 Contributions**
-We welcome contributions!  
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
-
 ### **🚀 This README is now:**
 ✔️ **Shorter** & more concise  
 ✔️ **Easier to follow**  
